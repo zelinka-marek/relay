@@ -11,11 +11,20 @@ datasource db {
 }
 
 model Contact {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  first     String?
-  last      String?
-  avatarUrl String?
-  favorite  Boolean?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  first         String?
+  last          String?
+  avatarUrl     String?
+  title         String?
+  company       String?
+  email         String?
+  phone         String?
+  location      String?
+  twitterHandle String?
+  websiteUrl    String?
+  linkedinUrl   String?
+  about         String?
+  favorite      Boolean?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

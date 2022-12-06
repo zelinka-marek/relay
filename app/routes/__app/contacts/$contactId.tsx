@@ -2,7 +2,15 @@ import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/20/solid";
 import type { Contact } from "@prisma/client";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
+import type { LinkProps } from "@remix-run/react";
+import {
+  Form,
+  NavLink,
+  Outlet,
+  useCatch,
+  useFetcher,
+  useLoaderData,
+} from "@remix-run/react";
 import classNames from "clsx";
 import React from "react";
 import invariant from "tiny-invariant";
@@ -142,6 +150,10 @@ function DeleteAction() {
   );
 }
 
+const tabs: { name: string; to: LinkProps["to"] }[] = [
+  { name: "Profile", to: "" },
+];
+
 export default function ContactRoute() {
   const { contact } = useLoaderData<typeof loader>();
 
@@ -188,6 +200,33 @@ export default function ContactRoute() {
           </div>
         </div>
         <div className="hidden flex-1 sm:block">{name}</div>
+      </div>
+      <div className="mt-6 sm:mt-2">
+        <div className="border-b border-gray-200">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+              {tabs.map((tab) => (
+                <NavLink
+                  key={tab.name}
+                  to={tab.to}
+                  className={({ isActive }) =>
+                    classNames(
+                      isActive
+                        ? "border-indigo-500 text-gray-900"
+                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                      "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+                    )
+                  }
+                >
+                  {tab.name}
+                </NavLink>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto mt-6 max-w-3xl px-4 sm:px-6 lg:px-8">
+        <Outlet />
       </div>
     </ContactsLayout>
   );
