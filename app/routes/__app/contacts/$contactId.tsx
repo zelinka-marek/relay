@@ -26,9 +26,6 @@ export async function loader({ params }: LoaderArgs) {
 export async function action({ request, params }: ActionArgs) {
   invariant(params.contactId, "contactId is missing");
 
-  const formData = await request.formData();
-  const intent = formData.get("intent");
-
   const contact = await prisma.contact.findUnique({
     where: { id: params.contactId },
     select: { id: true, favorite: true },
@@ -37,6 +34,9 @@ export async function action({ request, params }: ActionArgs) {
     throw json("Contact not found", { status: 404 });
   }
 
+  const formData = await request.formData();
+
+  const intent = formData.get("intent");
   if (intent === "favorite") {
     await prisma.contact.update({
       where: { id: contact.id },
@@ -62,14 +62,14 @@ function ContactsLayout(props: {
   const { contain, children } = props;
 
   return (
-    <article
+    <div
       className={classNames(
         contain && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
         "py-10"
       )}
     >
       {children}
-    </article>
+    </div>
   );
 }
 
