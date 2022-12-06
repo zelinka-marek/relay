@@ -86,7 +86,7 @@ function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
         name="intent"
         value="favorite"
         aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
-        className="relative rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+        className="rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
       >
         <StarIcon
           className={classNames(

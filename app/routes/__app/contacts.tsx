@@ -176,6 +176,9 @@ export default function ContactsRoute() {
                           ) : (
                             <i>No name</i>
                           )}
+                          {contact.favorite && (
+                            <span className="sr-only">, starred</span>
+                          )}
                         </span>
                         {contact.favorite && (
                           <StarIcon
