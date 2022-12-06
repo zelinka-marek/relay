@@ -16,8 +16,10 @@
     "@remix-run/react": "^1.8.1",
     "@remix-run/vercel": "^1.8.1",
     "@vercel/node": "^2.6.2",
+    "clsx": "^1.2.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "spin-delay": "^1.2.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^1.8.1",
