@@ -1,5 +1,5 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/20/solid";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
 import classNames from "clsx";
@@ -29,21 +29,25 @@ export async function action({ request, params }: ActionArgs) {
   const formData = await request.formData();
   const intent = formData.get("intent");
 
-  if (intent === "favorite") {
-    const contact = await prisma.contact.findUnique({
-      where: { id: params.contactId },
-      select: { id: true, favorite: true },
-    });
-    if (!contact) {
-      throw json("Contact not found", { status: 404 });
-    }
+  const contact = await prisma.contact.findUnique({
+    where: { id: params.contactId },
+    select: { id: true, favorite: true },
+  });
+  if (!contact) {
+    throw json("Contact not found", { status: 404 });
+  }
 
+  if (intent === "favorite") {
     await prisma.contact.update({
       where: { id: contact.id },
       data: { favorite: !contact.favorite },
     });
 
     return json(null);
+  } else if (intent === "delete") {
+    await prisma.contact.delete({ where: { id: contact.id } });
+
+    return redirect("/contacts");
   }
 
   throw json(`Unexpected operation by the intent of "${intent}"`, {
@@ -117,9 +121,18 @@ function EditAction() {
 
 function DeleteAction() {
   return (
-    <Form action="delete" method="post">
+    <Form
+      method="post"
+      onSubmit={(event) => {
+        if (!window.confirm("Are you sure you want to delete this contact?")) {
+          event.preventDefault();
+        }
+      }}
+    >
       <button
         type="submit"
+        name="intent"
+        value="delete"
         className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
       >
         <TrashIcon className="-ml-1 h-5 w-5 text-gray-400" />
