@@ -1,10 +1,10 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { ActionArgs, LoaderArgs, redirect } from "@remix-run/node";
-import { json } from "@remix-run/node";
+import type { Contact } from "@prisma/client";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import { Form, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
 import classNames from "clsx";
 import React from "react";
-import type { Contact } from "@prisma/client";
 import invariant from "tiny-invariant";
 import { Alert } from "~/components/alert";
 import { prisma } from "~/db.server";
