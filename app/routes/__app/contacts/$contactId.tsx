@@ -56,15 +56,15 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 function ContactsLayout(props: {
-  contain?: boolean;
+  containError?: boolean;
   children?: React.ReactNode;
 }) {
-  const { contain, children } = props;
+  const { containError, children } = props;
 
   return (
     <div
       className={classNames(
-        contain && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
+        containError && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
         "py-10"
       )}
     >
@@ -90,7 +90,7 @@ function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
         name="intent"
         value="favorite"
         aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
-        className="rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+        className="rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       >
         <StarIcon
           className={classNames(
@@ -110,7 +110,7 @@ function EditAction() {
     <Form action="edit">
       <button
         type="submit"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       >
         <PencilIcon className="-ml-1 h-5 w-5 text-gray-400" />
         Edit
@@ -133,7 +133,7 @@ function DeleteAction() {
         type="submit"
         name="intent"
         value="delete"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
       >
         <TrashIcon className="-ml-1 h-5 w-5 text-gray-400" />
         Delete
@@ -145,11 +145,10 @@ function DeleteAction() {
 export default function ContactRoute() {
   const { contact } = useLoaderData<typeof loader>();
 
-  const hasName = contact.first || contact.last;
   const name = (
     <div className="flex items-baseline gap-4">
       <h1 className="truncate text-2xl font-bold text-gray-900">
-        {hasName ? (
+        {contact.first || contact.last ? (
           `${contact.first} ${contact.last}`.trim()
         ) : (
           <i className="text-gray-500">No name</i>
@@ -170,9 +169,9 @@ export default function ContactRoute() {
               alt=""
             />
           ) : (
-            <span className="inline-block h-24 w-24 overflow-hidden rounded-xl bg-gray-200 sm:h-32 sm:w-32">
+            <span className="inline-block h-24 w-24 overflow-hidden rounded-xl bg-gray-100 sm:h-32 sm:w-32">
               <svg
-                className="h-full w-full text-gray-400"
+                className="h-full w-full text-gray-300"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -199,13 +198,13 @@ export function CatchBoundary() {
 
   if (caught.status === 400) {
     return (
-      <ContactsLayout contain>
+      <ContactsLayout containError>
         <Alert title="Unable to proceed with this operation" />
       </ContactsLayout>
     );
   } else if (caught.status === 404) {
     return (
-      <ContactsLayout contain>
+      <ContactsLayout containError>
         <Alert title="No contact found">
           We can't find the contact you're looking for. Please check your URL.
           Has the contact been deleted?
@@ -219,7 +218,7 @@ export function CatchBoundary() {
 
 export function ErrorBoundary() {
   return (
-    <ContactsLayout contain>
+    <ContactsLayout containError>
       <Alert title="An unexpected error occurred">
         We can't load the contact you're looking for. Please chek your URL and
         try again later.

@@ -122,10 +122,10 @@ export default function ContactsRoute() {
       <main className="flex-1 overflow-y-auto focus:outline-none lg:order-last">
         <Outlet />
       </main>
-      <aside className="hidden w-96 shrink-0 divide-y border-r bg-white lg:order-first lg:flex lg:flex-col">
+      <aside className="hidden w-96 shrink-0 divide-y border-r lg:order-first lg:flex lg:flex-col">
         <div className="px-6 pt-6 pb-4">
           <h2 className="text-lg font-medium text-gray-900">Contacts</h2>
-          <p className="mt-0.5 text-sm text-gray-600">
+          <p className="mt-0.5 text-sm text-gray-500">
             {contactsCount} total {contactsCount === 1 ? "contact" : "contacts"}
           </p>
           <div className="mt-6 flex gap-4">
@@ -135,67 +135,62 @@ export default function ContactsRoute() {
         </div>
         <nav className="flex-1 overflow-y-auto px-6 py-4" aria-label="Contacts">
           <ul role="list" className="space-y-1">
-            {contacts.map((contact) => {
-              const hasName = contact.first || contact.last;
-
-              return (
-                <li key={contact.id}>
-                  <NavLink
-                    prefetch="intent"
-                    to={contact.id}
-                    className={({ isActive }) =>
-                      classNames(
-                        isActive ? "bg-gray-100" : "hover:bg-gray-50",
-                        hasName ? "text-gray-900" : "text-gray-500",
-                        "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
-                      )
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {contact.avatarUrl ? (
-                          <img
-                            src={contact.avatarUrl}
-                            alt=""
-                            className="h-6 w-6 rounded-full"
-                          />
-                        ) : (
-                          <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-200">
-                            <svg
-                              className="h-full w-full text-gray-400"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                          </span>
-                        )}
-                        <span className="flex-auto">
-                          {hasName ? (
-                            `${contact.first} ${contact.last}`.trim()
-                          ) : (
-                            <i>No name</i>
-                          )}
-                          {contact.favorite && (
-                            <span className="sr-only">, starred</span>
-                          )}
+            {contacts.map((contact) => (
+              <li key={contact.id}>
+                <NavLink
+                  prefetch="intent"
+                  to={contact.id}
+                  className={({ isActive }) =>
+                    classNames(
+                      isActive ? "bg-gray-50" : "hover:bg-gray-50",
+                      "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800"
+                    )
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      {contact.avatarUrl ? (
+                        <img
+                          src={contact.avatarUrl}
+                          alt=""
+                          className="h-6 w-6 rounded-full"
+                        />
+                      ) : (
+                        <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-100">
+                          <svg
+                            className="h-full w-full text-gray-300"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                          </svg>
                         </span>
-                        {contact.favorite && (
-                          <StarIcon
-                            className={classNames(
-                              isActive
-                                ? "text-yellow-400"
-                                : "text-yellow-300 group-hover:text-yellow-400",
-                              "h-5 w-5"
-                            )}
-                          />
+                      )}
+                      <span className="flex-auto">
+                        {contact.first || contact.last ? (
+                          `${contact.first} ${contact.last}`.trim()
+                        ) : (
+                          <i className="text-gray-500">No name</i>
                         )}
-                      </>
-                    )}
-                  </NavLink>
-                </li>
-              );
-            })}
+                        {contact.favorite && (
+                          <span className="sr-only">, starred</span>
+                        )}
+                      </span>
+                      {contact.favorite && (
+                        <StarIcon
+                          className={classNames(
+                            isActive
+                              ? "text-yellow-400"
+                              : "text-yellow-300 group-hover:text-yellow-400",
+                            "h-5 w-5"
+                          )}
+                        />
+                      )}
+                    </>
+                  )}
+                </NavLink>
+              </li>
+            ))}
           </ul>
         </nav>
       </aside>
