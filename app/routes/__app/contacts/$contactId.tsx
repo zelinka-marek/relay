@@ -1,9 +1,11 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/20/solid";
 import type { LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useCatch, useLoaderData } from "@remix-run/react";
 import classNames from "clsx";
+import React from "react";
 import invariant from "tiny-invariant";
+import { Alert } from "~/components/alert";
 import { prisma } from "~/db.server";
 
 export async function loader({ params }: LoaderArgs) {
@@ -17,7 +19,25 @@ export async function loader({ params }: LoaderArgs) {
     throw json("Contact not found", { status: 404 });
   }
 
-  return json(contact);
+  return json({ contact });
+}
+
+function ContactsLayout(props: {
+  contain?: boolean;
+  children?: React.ReactNode;
+}) {
+  const { contain, children } = props;
+
+  return (
+    <article
+      className={classNames(
+        contain && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
+        "py-10"
+      )}
+    >
+      {children}
+    </article>
+  );
 }
 
 function FavoriteAction(props: { favorite: boolean | null }) {
@@ -72,7 +92,7 @@ function DeleteAction() {
 }
 
 export default function ContactRoute() {
-  const contact = useLoaderData<typeof loader>();
+  const { contact } = useLoaderData<typeof loader>();
 
   const hasName = contact.first || contact.last;
   const name = (
@@ -89,8 +109,8 @@ export default function ContactRoute() {
   );
 
   return (
-    <article>
-      <div className="mx-auto max-w-3xl space-y-6 px-4 pt-12 sm:px-6 lg:px-8">
+    <ContactsLayout>
+      <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6 lg:px-8">
         <div className="space-y-6 sm:flex sm:items-end sm:gap-5">
           {contact.avatarUrl ? (
             <img
@@ -119,6 +139,34 @@ export default function ContactRoute() {
         </div>
         <div className="hidden flex-1 sm:block">{name}</div>
       </div>
-    </article>
+    </ContactsLayout>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  if (caught.status === 404) {
+    return (
+      <ContactsLayout contain>
+        <Alert title="No contact found">
+          We can't find the contact you're looking for. Please check your URL.
+          Has the contact been deleted?
+        </Alert>
+      </ContactsLayout>
+    );
+  }
+
+  throw new Error(`Unhandled error: ${caught.status}`);
+}
+
+export function ErrorBoundary() {
+  return (
+    <ContactsLayout contain>
+      <Alert title="An unexpected error occurred">
+        We can't load the contact you're looking for. Please chek your URL and
+        try again later.
+      </Alert>
+    </ContactsLayout>
   );
 }
