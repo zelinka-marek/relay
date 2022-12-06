@@ -1,9 +1,10 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/20/solid";
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
+import { Form, useCatch, useFetcher, useLoaderData } from "@remix-run/react";
 import classNames from "clsx";
 import React from "react";
+import type { Contact } from "@prisma/client";
 import invariant from "tiny-invariant";
 import { Alert } from "~/components/alert";
 import { prisma } from "~/db.server";
@@ -20,6 +21,34 @@ export async function loader({ params }: LoaderArgs) {
   }
 
   return json({ contact });
+}
+
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.contactId, "contactId is missing");
+
+  const formData = await request.formData();
+  const intent = formData.get("intent");
+
+  if (intent === "favorite") {
+    const contact = await prisma.contact.findUnique({
+      where: { id: params.contactId },
+      select: { id: true, favorite: true },
+    });
+    if (!contact) {
+      throw json("Contact not found", { status: 404 });
+    }
+
+    await prisma.contact.update({
+      where: { id: contact.id },
+      data: { favorite: !contact.favorite },
+    });
+
+    return json(null);
+  }
+
+  throw json(`Unexpected operation by the intent of "${intent}"`, {
+    status: 400,
+  });
 }
 
 function ContactsLayout(props: {
@@ -40,14 +69,23 @@ function ContactsLayout(props: {
   );
 }
 
-function FavoriteAction(props: { favorite: boolean | null }) {
-  const { favorite } = props;
+function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
+  const { contact } = props;
+
+  const favoriteFetcher = useFetcher();
+
+  let favorite = contact.favorite;
+  if (favoriteFetcher.submission) {
+    favorite = !favorite;
+  }
 
   return (
-    <Form method="post">
+    <favoriteFetcher.Form method="post">
       <button
         type="submit"
-        aria-label={!favorite ? "Add to favorites" : "Remove from favorites"}
+        name="intent"
+        value="favorite"
+        aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
         className="relative rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
       >
         <StarIcon
@@ -59,7 +97,7 @@ function FavoriteAction(props: { favorite: boolean | null }) {
           )}
         />
       </button>
-    </Form>
+    </favoriteFetcher.Form>
   );
 }
 
@@ -104,7 +142,7 @@ export default function ContactRoute() {
           <i className="text-gray-500">No name</i>
         )}
       </h1>
-      <FavoriteAction favorite={contact.favorite} />
+      <FavoriteAction contact={contact} />
     </div>
   );
 
@@ -146,7 +184,13 @@ export default function ContactRoute() {
 export function CatchBoundary() {
   const caught = useCatch();
 
-  if (caught.status === 404) {
+  if (caught.status === 400) {
+    return (
+      <ContactsLayout contain>
+        <Alert title="Unable to proceed with this operation" />
+      </ContactsLayout>
+    );
+  } else if (caught.status === 404) {
     return (
       <ContactsLayout contain>
         <Alert title="No contact found">
@@ -157,7 +201,7 @@ export function CatchBoundary() {
     );
   }
 
-  throw new Error(`Unhandled error: ${caught.status}`);
+  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
 export function ErrorBoundary() {
