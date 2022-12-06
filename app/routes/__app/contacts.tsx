@@ -4,6 +4,8 @@ import {
   PlusIcon,
   StarIcon,
 } from "@heroicons/react/20/solid";
+import type { Prisma } from "@prisma/client";
+import type { LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -18,8 +20,22 @@ import classNames from "clsx";
 import { useSpinDelay } from "spin-delay";
 import { prisma } from "~/db.server";
 
-export async function loader() {
+export async function loader({ request }: LoaderArgs) {
+  const searchParams = new URL(request.url).searchParams;
+  const query = searchParams.get("q");
+
+  const contactsCount = await prisma.contact.count();
+
+  const where: Prisma.ContactWhereInput = {};
+  if (query) {
+    where.OR = [
+      { first: { contains: query, mode: "insensitive" } },
+      { last: { contains: query, mode: "insensitive" } },
+    ];
+  }
+
   const contacts = await prisma.contact.findMany({
+    where,
     select: {
       id: true,
       first: true,
@@ -30,7 +46,7 @@ export async function loader() {
     orderBy: [{ last: "asc" }, { createdAt: "asc" }],
   });
 
-  return json(contacts);
+  return json({ contacts, contactsCount });
 }
 
 export async function action() {
@@ -99,7 +115,7 @@ function CreateAction() {
 }
 
 export default function ContactsRoute() {
-  const contacts = useLoaderData<typeof loader>();
+  const { contacts, contactsCount } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -109,7 +125,9 @@ export default function ContactsRoute() {
       <aside className="hidden w-96 shrink-0 divide-y border-r bg-white lg:order-first lg:flex lg:flex-col">
         <div className="px-6 pt-6 pb-4">
           <h2 className="text-lg font-medium text-gray-900">Contacts</h2>
-          <p className="mt-0.5 text-sm text-gray-600">2 total contacts</p>
+          <p className="mt-0.5 text-sm text-gray-600">
+            {contactsCount} total {contactsCount === 1 ? "contact" : "contacts"}
+          </p>
           <div className="mt-6 flex gap-4">
             <SearchAction />
             <CreateAction />
