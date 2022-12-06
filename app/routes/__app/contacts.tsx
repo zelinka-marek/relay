@@ -143,7 +143,7 @@ export default function ContactsRoute() {
                   className={({ isActive }) =>
                     classNames(
                       isActive ? "bg-gray-50" : "hover:bg-gray-50",
-                      "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-800"
+                      "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-900"
                     )
                   }
                 >
