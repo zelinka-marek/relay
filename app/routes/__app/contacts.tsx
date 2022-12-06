@@ -4,16 +4,43 @@ import {
   PlusIcon,
   StarIcon,
 } from "@heroicons/react/20/solid";
+import { json, redirect } from "@remix-run/node";
 import {
   Form,
   NavLink,
   Outlet,
+  useLoaderData,
   useSearchParams,
   useSubmit,
   useTransition,
 } from "@remix-run/react";
 import classNames from "clsx";
 import { useSpinDelay } from "spin-delay";
+import { prisma } from "~/db.server";
+
+export async function loader() {
+  const contacts = await prisma.contact.findMany({
+    select: {
+      id: true,
+      first: true,
+      last: true,
+      avatarUrl: true,
+      favorite: true,
+    },
+    orderBy: [{ last: "asc" }, { createdAt: "asc" }],
+  });
+
+  return json(contacts);
+}
+
+export async function action() {
+  const contact = await prisma.contact.create({
+    data: {},
+    select: { id: true },
+  });
+
+  return redirect(`/contacts/${contact.id}`);
+}
 
 function SearchAction() {
   const [searchParams] = useSearchParams();
@@ -71,93 +98,8 @@ function CreateAction() {
   );
 }
 
-function ContactItem(props: {
-  contact: {
-    id: string;
-    avatarUrl: string | null;
-    first: string | null;
-    last: string | null;
-    favorite: boolean | null;
-  };
-}) {
-  const { contact } = props;
-
-  const hasName = contact.first || contact.last;
-
-  return (
-    <li>
-      <NavLink
-        prefetch="intent"
-        to={contact.id}
-        className={({ isActive }) =>
-          classNames(
-            isActive ? "bg-gray-100" : "hover:bg-gray-50",
-            hasName ? "text-gray-900" : "text-gray-500",
-            "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
-          )
-        }
-      >
-        {({ isActive }) => (
-          <>
-            {contact.avatarUrl ? (
-              <img
-                src={contact.avatarUrl}
-                alt=""
-                className="h-6 w-6 rounded-full"
-              />
-            ) : (
-              <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-200">
-                <svg
-                  className="h-full w-full text-gray-400"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-              </span>
-            )}
-            <span className="flex-auto">
-              {hasName ? (
-                `${contact.first} ${contact.last}`.trim()
-              ) : (
-                <i>No name</i>
-              )}
-            </span>
-            {contact.favorite && (
-              <StarIcon
-                className={classNames(
-                  isActive
-                    ? "text-yellow-400"
-                    : "text-yellow-300 group-hover:text-yellow-400",
-                  "h-5 w-5"
-                )}
-              />
-            )}
-          </>
-        )}
-      </NavLink>
-    </li>
-  );
-}
-
 export default function ContactsRoute() {
-  const contacts = [
-    {
-      id: "123",
-      first: "Aimee",
-      last: "Douglas",
-      avatarUrl:
-        "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=1024&h=1024&q=80",
-      favorite: true,
-    },
-    {
-      id: "456",
-      first: "Calvin",
-      last: "Hawkins",
-      avatarUrl: null,
-      favorite: null,
-    },
-  ];
+  const contacts = useLoaderData<typeof loader>();
 
   return (
     <div className="flex flex-1 overflow-hidden">
@@ -175,9 +117,64 @@ export default function ContactsRoute() {
         </div>
         <nav className="flex-1 overflow-y-auto px-6 py-4" aria-label="Contacts">
           <ul role="list" className="space-y-1">
-            {contacts.map((contact) => (
-              <ContactItem key={contact.id} contact={contact} />
-            ))}
+            {contacts.map((contact) => {
+              const hasName = contact.first || contact.last;
+
+              return (
+                <li key={contact.id}>
+                  <NavLink
+                    prefetch="intent"
+                    to={contact.id}
+                    className={({ isActive }) =>
+                      classNames(
+                        isActive ? "bg-gray-100" : "hover:bg-gray-50",
+                        hasName ? "text-gray-900" : "text-gray-500",
+                        "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {contact.avatarUrl ? (
+                          <img
+                            src={contact.avatarUrl}
+                            alt=""
+                            className="h-6 w-6 rounded-full"
+                          />
+                        ) : (
+                          <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-200">
+                            <svg
+                              className="h-full w-full text-gray-400"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                          </span>
+                        )}
+                        <span className="flex-auto">
+                          {hasName ? (
+                            `${contact.first} ${contact.last}`.trim()
+                          ) : (
+                            <i>No name</i>
+                          )}
+                        </span>
+                        {contact.favorite && (
+                          <StarIcon
+                            className={classNames(
+                              isActive
+                                ? "text-yellow-400"
+                                : "text-yellow-300 group-hover:text-yellow-400",
+                              "h-5 w-5"
+                            )}
+                          />
+                        )}
+                      </>
+                    )}
+                  </NavLink>
+                </li>
+              );
+            })}
           </ul>
         </nav>
       </aside>

@@ -1,6 +1,24 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/20/solid";
-import { Form } from "@remix-run/react";
+import type { LoaderArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { Form, useLoaderData } from "@remix-run/react";
 import classNames from "clsx";
+import invariant from "tiny-invariant";
+import { prisma } from "~/db.server";
+
+export async function loader({ params }: LoaderArgs) {
+  invariant(params.contactId, "contactId is missing");
+
+  const contact = await prisma.contact.findUnique({
+    where: { id: params.contactId },
+    select: { first: true, last: true, avatarUrl: true, favorite: true },
+  });
+  if (!contact) {
+    throw json("Contact not found", { status: 404 });
+  }
+
+  return json(contact);
+}
 
 function FavoriteAction(props: { favorite: boolean | null }) {
   const { favorite } = props;
@@ -54,14 +72,7 @@ function DeleteAction() {
 }
 
 export default function ContactRoute() {
-  const contact = {
-    id: "123",
-    first: "Aimee",
-    last: "Douglas",
-    avatarUrl:
-      "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=1024&h=1024&q=80",
-    favorite: true,
-  };
+  const contact = useLoaderData<typeof loader>();
 
   const hasName = contact.first || contact.last;
   const name = (
