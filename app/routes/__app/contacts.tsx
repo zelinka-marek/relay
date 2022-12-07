@@ -55,7 +55,7 @@ export async function action() {
     select: { id: true },
   });
 
-  return redirect(`/contacts/${contact.id}`);
+  return redirect(`/contacts/${contact.id}/edit`);
 }
 
 function SearchAction() {
