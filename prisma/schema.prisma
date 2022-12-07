@@ -12,8 +12,8 @@ datasource db {
 
 model Contact {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  first         String?
-  last          String?
+  firstName     String?
+  lastName      String?
   avatarUrl     String?
   title         String?
   company       String?

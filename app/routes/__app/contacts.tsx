@@ -29,8 +29,8 @@ export async function loader({ request }: LoaderArgs) {
   const where: Prisma.ContactWhereInput = {};
   if (query) {
     where.OR = [
-      { first: { contains: query, mode: "insensitive" } },
-      { last: { contains: query, mode: "insensitive" } },
+      { firstName: { contains: query, mode: "insensitive" } },
+      { lastName: { contains: query, mode: "insensitive" } },
     ];
   }
 
@@ -38,12 +38,12 @@ export async function loader({ request }: LoaderArgs) {
     where,
     select: {
       id: true,
-      first: true,
-      last: true,
+      firstName: true,
+      lastName: true,
       avatarUrl: true,
       favorite: true,
     },
-    orderBy: [{ last: "asc" }, { createdAt: "asc" }],
+    orderBy: [{ lastName: "asc" }, { createdAt: "asc" }],
   });
 
   return json({ contacts, contactsCount });
@@ -167,8 +167,8 @@ export default function ContactsRoute() {
                         </span>
                       )}
                       <span className="flex-auto">
-                        {contact.first || contact.last ? (
-                          `${contact.first} ${contact.last}`.trim()
+                        {contact.firstName || contact.lastName ? (
+                          `${contact.firstName} ${contact.lastName}`.trim()
                         ) : (
                           <i className="text-gray-500">No name</i>
                         )}

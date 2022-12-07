@@ -22,7 +22,12 @@ export async function loader({ params }: LoaderArgs) {
 
   const contact = await prisma.contact.findUnique({
     where: { id: params.contactId },
-    select: { first: true, last: true, avatarUrl: true, favorite: true },
+    select: {
+      firstName: true,
+      lastName: true,
+      avatarUrl: true,
+      favorite: true,
+    },
   });
   if (!contact) {
     throw json("Contact not found", { status: 404 });
@@ -160,8 +165,8 @@ export default function ContactRoute() {
   const name = (
     <div className="flex items-baseline gap-4">
       <h1 className="truncate text-2xl font-bold text-gray-900">
-        {contact.first || contact.last ? (
-          `${contact.first} ${contact.last}`.trim()
+        {contact.firstName || contact.lastName ? (
+          `${contact.firstName} ${contact.lastName}`.trim()
         ) : (
           <i className="text-gray-500">No name</i>
         )}
