@@ -132,65 +132,71 @@ export default function ContactsRoute() {
             <CreateAction />
           </div>
         </div>
-        <nav className="flex-1 overflow-y-auto px-6 py-4" aria-label="Contacts">
-          <ul role="list" className="space-y-1">
-            {contacts.map((contact) => (
-              <li key={contact.id}>
-                <NavLink
-                  prefetch="intent"
-                  to={contact.id}
-                  className={({ isActive }) =>
-                    classNames(
-                      isActive ? "bg-gray-50" : "hover:bg-gray-50",
-                      "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-900"
-                    )
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      {contact.avatarUrl ? (
-                        <img
-                          src={contact.avatarUrl}
-                          alt=""
-                          className="h-6 w-6 rounded-full"
-                        />
-                      ) : (
-                        <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-100">
-                          <svg
-                            className="h-full w-full text-gray-300"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                          </svg>
-                        </span>
-                      )}
-                      <span className="flex-auto">
-                        {contact.firstName || contact.lastName ? (
-                          `${contact.firstName} ${contact.lastName}`.trim()
+        <nav className="flex-1 overflow-y-auto px-6 py-4">
+          {contacts.length ? (
+            <ul role="list" className="space-y-1">
+              {contacts.map((contact) => (
+                <li key={contact.id}>
+                  <NavLink
+                    prefetch="intent"
+                    to={contact.id}
+                    className={({ isActive }) =>
+                      classNames(
+                        isActive ? "bg-gray-50" : "hover:bg-gray-50",
+                        "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-900"
+                      )
+                    }
+                  >
+                    {({ isActive }) => (
+                      <>
+                        {contact.avatarUrl ? (
+                          <img
+                            src={contact.avatarUrl}
+                            alt=""
+                            className="h-6 w-6 rounded-full"
+                          />
                         ) : (
-                          <i className="text-gray-500">No name</i>
+                          <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-100">
+                            <svg
+                              className="h-full w-full text-gray-300"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                          </span>
                         )}
-                        {contact.favorite && (
-                          <span className="sr-only">, starred</span>
-                        )}
-                      </span>
-                      {contact.favorite && (
-                        <StarIcon
-                          className={classNames(
-                            isActive
-                              ? "text-yellow-400"
-                              : "text-yellow-300 group-hover:text-yellow-400",
-                            "h-5 w-5"
+                        <span className="flex-auto">
+                          {contact.firstName || contact.lastName ? (
+                            `${contact.firstName} ${contact.lastName}`.trim()
+                          ) : (
+                            <i className="text-gray-500">No name</i>
                           )}
-                        />
-                      )}
-                    </>
-                  )}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
+                          {contact.favorite && (
+                            <span className="sr-only">, starred</span>
+                          )}
+                        </span>
+                        {contact.favorite && (
+                          <StarIcon
+                            className={classNames(
+                              isActive
+                                ? "text-yellow-400"
+                                : "text-yellow-300 group-hover:text-yellow-400",
+                              "h-5 w-5"
+                            )}
+                          />
+                        )}
+                      </>
+                    )}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-500">
+              <i>No contacts found</i>
+            </p>
+          )}
         </nav>
       </aside>
     </div>

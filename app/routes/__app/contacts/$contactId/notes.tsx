@@ -102,18 +102,24 @@ export default function ContactNotesRoute() {
       <Form action="new">
         <button
           type="submit"
-          className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+          className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
         >
           New note
         </button>
       </Form>
-      <div className="flow-root">
-        <ul role="list" className="-my-5 divide-y divide-gray-200">
-          {notes.map((note) => (
-            <NoteItem key={note.id} note={note} />
-          ))}
-        </ul>
-      </div>
+      {notes.length ? (
+        <div className="flow-root">
+          <ul role="list" className="-my-5 divide-y divide-gray-200">
+            {notes.map((note) => (
+              <NoteItem key={note.id} note={note} />
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p className="text-center text-sm text-gray-500">
+          <i>No notes found</i>
+        </p>
+      )}
     </div>
   );
 }
