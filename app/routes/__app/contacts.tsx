@@ -122,7 +122,7 @@ export default function ContactsRoute() {
       <main className="flex-1 overflow-y-auto focus:outline-none lg:order-last">
         <Outlet />
       </main>
-      <aside className="hidden w-96 shrink-0 divide-y border-r lg:order-first lg:flex lg:flex-col">
+      <aside className="hidden w-96 shrink-0 divide-y border-r bg-white lg:order-first lg:flex lg:flex-col">
         <div className="px-6 pt-6 pb-4">
           <h2 className="text-lg font-medium text-gray-900">Contacts</h2>
           <p className="mt-0.5 text-sm text-gray-500">
