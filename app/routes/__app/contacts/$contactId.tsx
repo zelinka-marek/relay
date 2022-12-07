@@ -103,7 +103,7 @@ function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
         name="intent"
         value="favorite"
         aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
-        className="rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        className="rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
       >
         <StarIcon
           className={classNames(
@@ -123,7 +123,7 @@ function EditAction() {
     <Form action="edit">
       <button
         type="submit"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
       >
         <PencilIcon className="-ml-1 h-5 w-5 text-gray-400" />
         Edit
@@ -146,7 +146,7 @@ function DeleteAction() {
         type="submit"
         name="intent"
         value="delete"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
       >
         <TrashIcon className="-ml-1 h-5 w-5 text-gray-400" />
         Delete
@@ -157,6 +157,7 @@ function DeleteAction() {
 
 const tabs: { name: string; to: LinkProps["to"] }[] = [
   { name: "Profile", to: "" },
+  { name: "Notes", to: "notes" },
 ];
 
 export default function ContactRoute() {
@@ -213,6 +214,8 @@ export default function ContactRoute() {
               {tabs.map((tab) => (
                 <NavLink
                   key={tab.name}
+                  prefetch="render"
+                  end
                   to={tab.to}
                   className={({ isActive }) =>
                     classNames(
