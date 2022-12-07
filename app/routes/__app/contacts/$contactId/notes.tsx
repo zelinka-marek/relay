@@ -19,11 +19,8 @@ export async function loader({ params }: LoaderArgs) {
       body: true,
       createdAt: true,
     },
-    orderBy: [{ createdAt: "asc" }],
+    orderBy: [{ createdAt: "desc" }],
   });
-  if (!notes) {
-    throw json("Notes not found", { status: 404 });
-  }
 
   return json({ notes });
 }
@@ -36,7 +33,6 @@ export async function action({ request }: ActionArgs) {
 
   const note = await prisma.note.findUnique({
     where: { id: noteId },
-    select: { id: true },
   });
   if (!note) {
     throw json("Note not found", { status: 404 });
@@ -76,7 +72,15 @@ function NoteItem(props: { note: LoaderNote }) {
           </button>
         </Form>
         <span className="text-gray-500">·</span>
-        <deleteFetcher.Form method="post" className="inline-flex">
+        <deleteFetcher.Form
+          method="post"
+          onSubmit={(event) => {
+            if (!window.confirm("Are you sure you want to delete this note?")) {
+              event.preventDefault();
+            }
+          }}
+          className="inline-flex"
+        >
           <input type="hidden" name="noteId" value={note.id} />
           <button
             type="submit"

@@ -41,7 +41,6 @@ export async function action({ request, params }: ActionArgs) {
 
   const contact = await prisma.contact.findUnique({
     where: { id: params.contactId },
-    select: { id: true, favorite: true },
   });
   if (!contact) {
     throw json("Contact not found", { status: 404 });

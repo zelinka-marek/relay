@@ -52,7 +52,6 @@ export async function loader({ request }: LoaderArgs) {
 export async function action() {
   const contact = await prisma.contact.create({
     data: {},
-    select: { id: true },
   });
 
   return redirect(`/contacts/${contact.id}/edit`);
