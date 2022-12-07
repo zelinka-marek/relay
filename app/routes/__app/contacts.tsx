@@ -116,9 +116,17 @@ function CreateAction() {
 export default function ContactsRoute() {
   const { contacts, contactsCount } = useLoaderData<typeof loader>();
 
+  const transition = useTransition();
+  const navigating = transition.state === "loading";
+
   return (
     <div className="flex flex-1 overflow-hidden">
-      <main className="flex-1 overflow-y-auto focus:outline-none lg:order-last">
+      <main
+        className={classNames(
+          navigating && "opacity-25 transition-opacity delay-200 duration-200",
+          "flex-1 overflow-y-auto focus:outline-none lg:order-last"
+        )}
+      >
         <Outlet />
       </main>
       <aside className="hidden w-96 shrink-0 divide-y border-r bg-white lg:order-first lg:flex lg:flex-col">
