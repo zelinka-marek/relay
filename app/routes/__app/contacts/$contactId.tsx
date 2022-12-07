@@ -156,7 +156,7 @@ function DeleteAction() {
 }
 
 const tabs: { name: string; to: LinkProps["to"] }[] = [
-  { name: "Profile", to: "" },
+  { name: "Profile", to: "." },
   { name: "Notes", to: "notes" },
 ];
 
@@ -215,7 +215,7 @@ export default function ContactRoute() {
                 <NavLink
                   key={tab.name}
                   prefetch="render"
-                  end
+                  end={tab.to === "."}
                   to={tab.to}
                   className={({ isActive }) =>
                     classNames(
