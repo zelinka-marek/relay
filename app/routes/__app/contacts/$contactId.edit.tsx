@@ -251,7 +251,7 @@ export default function EditContactRoute() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Email
+                  Email address
                 </label>
                 <input
                   type="email"
