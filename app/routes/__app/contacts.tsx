@@ -92,7 +92,7 @@ function SearchAction() {
               replace: !isFirstSearch,
             });
           }}
-          className="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500"
+          className="block w-full rounded-md border-gray-300 pl-10 text-sm focus:border-indigo-500 focus:ring-indigo-500"
           placeholder="Search"
           aria-label="Search contacts"
           defaultValue={query}

@@ -52,7 +52,7 @@ function NoteItem(props: { note: LoaderNote }) {
     <li key={note.id} className="py-5">
       <p className="text-sm font-medium text-gray-900">{note.title}</p>
       <p className="mt-1 max-w-prose text-sm text-gray-700">{note.body}</p>
-      <div className="mt-2 space-x-2">
+      <div className="mt-2 flex items-center gap-2">
         <time
           dateTime={note.createdAt}
           className="text-sm font-medium text-gray-500"
