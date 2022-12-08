@@ -83,65 +83,63 @@ export default function EditNoteRoute() {
         <h2 className="text-lg font-medium leading-6 text-gray-900">
           Edit Note
         </h2>
-        <div className="space-y-6">
-          <div>
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
+        <div>
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Title
+          </label>
+          <input
+            ref={titleRef}
+            type="text"
+            name="title"
+            id="title"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            placeholder="Title"
+            defaultValue={note.title}
+            aria-invalid={actionData?.errors.title ? true : undefined}
+            aria-errormessage="title-errors"
+          />
+          {actionData?.errors.title && (
+            <div
+              id="title-errors"
+              className="mt-2 space-y-1 text-sm text-red-600"
             >
-              Title
-            </label>
-            <input
-              ref={titleRef}
-              type="text"
-              name="title"
-              id="title"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="Title"
-              defaultValue={note.title}
-              aria-invalid={actionData?.errors.title ? true : undefined}
-              aria-errormessage="title-errors"
-            />
-            {actionData?.errors.title && (
-              <div
-                id="title-errors"
-                className="mt-2 space-y-1 text-sm text-red-600"
-              >
-                {actionData.errors.title.map((error) => (
-                  <p key={error}>{error}</p>
-                ))}
-              </div>
-            )}
-          </div>
-          <div>
-            <label
-              htmlFor="body"
-              className="block text-sm font-medium text-gray-700"
+              {actionData.errors.title.map((error) => (
+                <p key={error}>{error}</p>
+              ))}
+            </div>
+          )}
+        </div>
+        <div>
+          <label
+            htmlFor="body"
+            className="block text-sm font-medium text-gray-700"
+          >
+            Description
+          </label>
+          <textarea
+            ref={bodyRef}
+            name="body"
+            id="body"
+            rows={4}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            placeholder="Weite a note..."
+            defaultValue={note.body}
+            aria-invalid={actionData?.errors.body ? true : undefined}
+            aria-errormessage="body-errors"
+          />
+          {actionData?.errors.body && (
+            <div
+              id="body-errors"
+              className="mt-2 space-y-1 text-sm text-red-600"
             >
-              Description
-            </label>
-            <textarea
-              ref={bodyRef}
-              name="body"
-              id="body"
-              rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              placeholder="Weite a note..."
-              defaultValue={note.body}
-              aria-invalid={actionData?.errors.body ? true : undefined}
-              aria-errormessage="body-errors"
-            />
-            {actionData?.errors.body && (
-              <div
-                id="body-errors"
-                className="mt-2 space-y-1 text-sm text-red-600"
-              >
-                {actionData.errors.body.map((error) => (
-                  <p key={error}>{error}</p>
-                ))}
-              </div>
-            )}
-          </div>
+              {actionData.errors.body.map((error) => (
+                <p key={error}>{error}</p>
+              ))}
+            </div>
+          )}
         </div>
         <div className="flex justify-end gap-3">
           <button
