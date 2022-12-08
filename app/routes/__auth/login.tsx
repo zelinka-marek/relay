@@ -1,12 +1,12 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { Logo } from "~/components/logo";
-import { createUserSession, redirectAuthedUser } from "~/session.server";
-import { z } from "zod";
 import { useEffect, useRef } from "react";
+import { z } from "zod";
+import { Logo } from "~/components/logo";
 import { prisma } from "~/db.server";
 import { verify } from "~/lib/auth.server";
+import { createUserSession, redirectAuthedUser } from "~/session.server";
 import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
@@ -75,6 +75,10 @@ export async function action({ request }: ActionArgs) {
     redirectTo,
   });
 }
+
+export const meta: MetaFunction = () => {
+  return { title: "Sign in" };
+};
 
 export default function LoginRoute() {
   const [searchParams] = useSearchParams();

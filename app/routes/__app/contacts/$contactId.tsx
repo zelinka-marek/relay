@@ -1,6 +1,6 @@
 import { PencilIcon, StarIcon, TrashIcon } from "@heroicons/react/20/solid";
 import type { Contact } from "@prisma/client";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import type { LinkProps } from "@remix-run/react";
 import {
@@ -72,6 +72,21 @@ export async function action({ request, params }: ActionArgs) {
     status: 400,
   });
 }
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data.contact) {
+    return { title: "Not Found" };
+  }
+
+  const name =
+    data.contact.firstName || data.contact.lastName
+      ? `${data.contact.firstName} ${data.contact.lastName}`.trim()
+      : "No name";
+
+  return {
+    title: name,
+  };
+};
 
 function Layout(props: { containError?: boolean; children?: React.ReactNode }) {
   const { containError, children } = props;

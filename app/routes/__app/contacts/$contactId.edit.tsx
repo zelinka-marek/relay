@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -112,6 +112,21 @@ export async function action({ request, params }: ActionArgs) {
 
   return redirect(`/contacts/${contact.id}`);
 }
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data.contact) {
+    return { title: "Not Found" };
+  }
+
+  const name =
+    data.contact.firstName || data.contact.lastName
+      ? `${data.contact.firstName} ${data.contact.lastName}`.trim()
+      : "No name";
+
+  return {
+    title: `${name} - Edit`,
+  };
+};
 
 function Layout(props: { containError?: boolean; children?: React.ReactNode }) {
   const { containError, children } = props;

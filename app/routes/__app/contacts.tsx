@@ -5,7 +5,7 @@ import {
   PlusIcon,
   StarIcon,
 } from "@heroicons/react/20/solid";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -64,6 +64,14 @@ export async function action({ request }: ActionArgs) {
 
   return redirect(`/contacts/${contact.id}/edit`);
 }
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data.contacts.length) {
+    return { title: "No contacts" };
+  }
+
+  return { title: `Contacts (${data.contactsCount})` };
+};
 
 function SearchAction() {
   const [searchParams] = useSearchParams();

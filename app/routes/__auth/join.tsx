@@ -1,4 +1,4 @@
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import { useEffect, useRef } from "react";
@@ -61,6 +61,10 @@ export async function action({ request }: ActionArgs) {
     redirectTo,
   });
 }
+
+export const meta: MetaFunction = () => {
+  return { title: "Sign up" };
+};
 
 export default function JoinRoute() {
   const [searchParams] = useSearchParams();
