@@ -28,12 +28,12 @@ export async function loader({ params }: ActionArgs) {
 }
 
 const noteSchema = z.object({
-  title: z.string().trim().min(1, "Title is required."),
+  title: z.string().trim().min(1, "Title is required"),
   body: z
     .string()
     .trim()
-    .min(1, "Description is required.")
-    .max(260, "Description is too long."),
+    .min(1, "Description is required")
+    .max(260, "Description is too long"),
 });
 
 export async function action({ request, params }: ActionArgs) {
