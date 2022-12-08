@@ -38,9 +38,9 @@ export async function action({ request }: ActionArgs) {
     throw json("Note not found", { status: 404 });
   }
 
-  const deletedNote = await prisma.note.delete({ where: { id: note.id } });
+  await prisma.note.delete({ where: { id: note.id } });
 
-  return json({ deletedNote });
+  return json(null);
 }
 
 function NoteItem(props: { note: LoaderNote }) {
@@ -62,7 +62,7 @@ function NoteItem(props: { note: LoaderNote }) {
         </time>
       </p>
       <p className="mt-1 max-w-prose text-sm text-gray-600">{note.body}</p>
-      <div className="mt-2 flex gap-2">
+      <div className="mt-1 flex gap-2">
         <Form action={`${note.id}/edit`} className="inline-flex">
           <button
             type="submit"

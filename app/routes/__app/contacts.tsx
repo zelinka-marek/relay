@@ -12,6 +12,7 @@ import {
   NavLink,
   Outlet,
   useLoaderData,
+  useLocation,
   useSearchParams,
   useSubmit,
   useTransition,
@@ -71,7 +72,7 @@ function SearchAction() {
   const submit = useSubmit();
 
   return (
-    <Form role="search" className="w-full max-w-lg md:max-w-xs">
+    <Form role="search" className="w-full">
       <div className="relative rounded-md shadow-sm">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
           {shouldRenderSpinner ? (
@@ -89,26 +90,12 @@ function SearchAction() {
               replace: !isFirstSearch,
             });
           }}
-          className="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500"
           placeholder="Search"
           aria-label="Search contacts"
           defaultValue={query}
         />
       </div>
-    </Form>
-  );
-}
-
-function CreateAction() {
-  return (
-    <Form method="post">
-      <button
-        type="submit"
-        className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-      >
-        <PlusIcon className="-ml-1 h-5 w-5 text-gray-400" />
-        New
-      </button>
     </Form>
   );
 }
@@ -119,28 +106,58 @@ export default function ContactsRoute() {
   const transition = useTransition();
   const navigating = transition.state === "loading";
 
+  const location = useLocation();
+  const matchesRoute = location.pathname.match(/contacts\/?$/);
+
   return (
     <div className="flex flex-1 overflow-hidden">
       <main
         className={classNames(
+          matchesRoute && "hidden lg:block",
           navigating && "opacity-25 transition-opacity delay-200 duration-200",
           "flex-1 overflow-y-auto focus:outline-none lg:order-last"
         )}
       >
         <Outlet />
       </main>
-      <aside className="hidden w-96 shrink-0 divide-y border-r bg-white lg:order-first lg:flex lg:flex-col">
-        <div className="px-6 pt-6 pb-4">
-          <h2 className="text-lg font-medium text-gray-900">Contacts</h2>
-          <p className="mt-0.5 text-sm text-gray-500">
-            {contactsCount} total {contactsCount === 1 ? "contact" : "contacts"}
-          </p>
-          <div className="mt-6 flex gap-4">
-            <SearchAction />
-            <CreateAction />
+      <aside
+        className={classNames(
+          matchesRoute ? "w-full" : "hidden",
+          "shrink-0 bg-white lg:order-first lg:flex lg:w-96 lg:flex-col lg:border-r"
+        )}
+      >
+        <div className="border-b">
+          <div
+            className={classNames(
+              matchesRoute && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
+              "px-6 pt-6 pb-4"
+            )}
+          >
+            <h2 className="text-lg font-medium text-gray-900">Contacts</h2>
+            <p className="mt-0.5 text-sm text-gray-500">
+              {contactsCount} total{" "}
+              {contactsCount === 1 ? "contact" : "contacts"}
+            </p>
+            <div className="mt-6 flex gap-4">
+              <SearchAction />
+              <Form method="post">
+                <button
+                  type="submit"
+                  className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  <PlusIcon className="-ml-1 h-5 w-5 text-gray-400" />
+                  New
+                </button>
+              </Form>
+            </div>
           </div>
         </div>
-        <nav className="flex-1 overflow-y-auto px-6 py-4">
+        <nav
+          className={classNames(
+            matchesRoute && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
+            "flex-1 overflow-y-auto px-6 py-4"
+          )}
+        >
           {contacts.length ? (
             <ul role="list" className="space-y-1">
               {contacts.map((contact) => (

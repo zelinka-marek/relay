@@ -108,10 +108,7 @@ export async function action({ request, params }: ActionArgs) {
   return redirect(`/contacts/${contact.id}`);
 }
 
-function EditContactLayout(props: {
-  containError?: boolean;
-  children?: React.ReactNode;
-}) {
+function Layout(props: { containError?: boolean; children?: React.ReactNode }) {
   const { containError, children } = props;
 
   return (
@@ -133,7 +130,7 @@ export default function EditContactRoute() {
   const navigate = useNavigate();
 
   return (
-    <EditContactLayout>
+    <Layout>
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <Form method="post">
           <div className="space-y-6">
@@ -497,7 +494,7 @@ export default function EditContactRoute() {
           </div>
         </Form>
       </div>
-    </EditContactLayout>
+    </Layout>
   );
 }
 
@@ -506,12 +503,12 @@ export function CatchBoundary() {
 
   if (caught.status === 404) {
     return (
-      <EditContactLayout containError>
+      <Layout containError>
         <Alert title="No contact found">
           We can't find the contact you're looking for. Please check your URL.
           Has the contact been deleted?
         </Alert>
-      </EditContactLayout>
+      </Layout>
     );
   }
 
@@ -520,11 +517,11 @@ export function CatchBoundary() {
 
 export function ErrorBoundary() {
   return (
-    <EditContactLayout containError>
+    <Layout containError>
       <Alert title="An unexpected error occurred">
         We can't load the contact you're looking for. Please chek your URL and
         try again later.
       </Alert>
-    </EditContactLayout>
+    </Layout>
   );
 }

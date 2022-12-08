@@ -67,10 +67,7 @@ export async function action({ request, params }: ActionArgs) {
   });
 }
 
-function ContactsLayout(props: {
-  containError?: boolean;
-  children?: React.ReactNode;
-}) {
+function Layout(props: { containError?: boolean; children?: React.ReactNode }) {
   const { containError, children } = props;
 
   return (
@@ -117,43 +114,6 @@ function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
   );
 }
 
-function EditAction() {
-  return (
-    <Form action="edit">
-      <button
-        type="submit"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-      >
-        <PencilIcon className="-ml-1 h-5 w-5 text-gray-400" />
-        Edit
-      </button>
-    </Form>
-  );
-}
-
-function DeleteAction() {
-  return (
-    <Form
-      method="post"
-      onSubmit={(event) => {
-        if (!window.confirm("Are you sure you want to delete this contact?")) {
-          event.preventDefault();
-        }
-      }}
-    >
-      <button
-        type="submit"
-        name="intent"
-        value="delete"
-        className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
-      >
-        <TrashIcon className="-ml-1 h-5 w-5 text-gray-400" />
-        Delete
-      </button>
-    </Form>
-  );
-}
-
 const tabs: { name: string; to: LinkProps["to"] }[] = [
   { name: "Profile", to: "." },
   { name: "Notes", to: "notes" },
@@ -176,7 +136,7 @@ export default function ContactRoute() {
   );
 
   return (
-    <ContactsLayout>
+    <Layout>
       <div className="mx-auto max-w-3xl space-y-6 px-4 sm:px-6 lg:px-8">
         <div className="space-y-6 sm:flex sm:items-end sm:gap-5">
           {contact.avatarUrl ? (
@@ -199,8 +159,37 @@ export default function ContactRoute() {
           <div className="sm:flex sm:flex-1 sm:items-center sm:justify-end sm:gap-6 sm:pb-1">
             <div className="mt-6 flex-1 sm:hidden">{name}</div>
             <div className="justify-stretch mt-6 flex flex-col gap-y-3 sm:flex-row sm:gap-x-4">
-              <EditAction />
-              <DeleteAction />
+              <Form action="edit">
+                <button
+                  type="submit"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                >
+                  <PencilIcon className="-ml-1 h-5 w-5 text-gray-400" />
+                  Edit
+                </button>
+              </Form>
+              <Form
+                method="post"
+                onSubmit={(event) => {
+                  if (
+                    !window.confirm(
+                      "Are you sure you want to delete this contact?"
+                    )
+                  ) {
+                    event.preventDefault();
+                  }
+                }}
+              >
+                <button
+                  type="submit"
+                  name="intent"
+                  value="delete"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                >
+                  <TrashIcon className="-ml-1 h-5 w-5 text-gray-400" />
+                  Delete
+                </button>
+              </Form>
             </div>
           </div>
         </div>
@@ -235,7 +224,7 @@ export default function ContactRoute() {
       <div className="mx-auto mt-6 max-w-3xl px-4 sm:px-6 lg:px-8">
         <Outlet />
       </div>
-    </ContactsLayout>
+    </Layout>
   );
 }
 
@@ -244,18 +233,18 @@ export function CatchBoundary() {
 
   if (caught.status === 400) {
     return (
-      <ContactsLayout containError>
+      <Layout containError>
         <Alert title="Unable to proceed with this operation" />
-      </ContactsLayout>
+      </Layout>
     );
   } else if (caught.status === 404) {
     return (
-      <ContactsLayout containError>
+      <Layout containError>
         <Alert title="No contact found">
           We can't find the contact you're looking for. Please check your URL.
           Has the contact been deleted?
         </Alert>
-      </ContactsLayout>
+      </Layout>
     );
   }
 
@@ -264,11 +253,11 @@ export function CatchBoundary() {
 
 export function ErrorBoundary() {
   return (
-    <ContactsLayout containError>
+    <Layout containError>
       <Alert title="An unexpected error occurred">
         We can't load the contact you're looking for. Please chek your URL and
         try again later.
       </Alert>
-    </ContactsLayout>
+    </Layout>
   );
 }
