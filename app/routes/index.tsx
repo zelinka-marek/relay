@@ -1,6 +1,15 @@
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import type { LoaderArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { Logo } from "~/components/logo";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
+import { redirectAuthedUser } from "~/session.server";
+
+export async function loader({ request }: LoaderArgs) {
+  await redirectAuthedUser(request, "/contacts");
+
+  return json(null);
+}
 
 export default function IndexRoute() {
   return (

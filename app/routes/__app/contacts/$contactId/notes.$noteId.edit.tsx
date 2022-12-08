@@ -40,7 +40,9 @@ export async function action({ request, params }: ActionArgs) {
   invariant(params.contactId, "contactId is missing");
   invariant(params.noteId, "noteId is missing");
 
-  const note = await prisma.note.findUnique({ where: { id: params.noteId } });
+  const note = await prisma.note.findFirst({
+    where: { id: params.noteId, contactId: params.contactId },
+  });
   if (!note) {
     throw json("Note not found", { status: 404 });
   }

@@ -3,12 +3,15 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import { prisma } from "~/db.server";
+import { requireUserId } from "~/session.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
+  const userId = await requireUserId(request);
+
   invariant(params.contactId, "contactId is missing");
 
-  const contact = await prisma.contact.findUnique({
-    where: { id: params.contactId },
+  const contact = await prisma.contact.findFirst({
+    where: { id: params.contactId, userId },
     select: {
       title: true,
       company: true,

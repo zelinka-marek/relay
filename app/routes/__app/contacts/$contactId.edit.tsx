@@ -12,12 +12,15 @@ import invariant from "tiny-invariant";
 import { z } from "zod";
 import { Alert } from "~/components/alert";
 import { prisma } from "~/db.server";
+import { requireUserId } from "~/session.server";
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ request, params }: LoaderArgs) {
+  const userId = await requireUserId(request);
+
   invariant(params.contactId, "contactId is missing");
 
-  const contact = await prisma.contact.findUnique({
-    where: { id: params.contactId },
+  const contact = await prisma.contact.findFirst({
+    where: { id: params.contactId, userId },
   });
   if (!contact) {
     throw json("Contact not found", { status: 404 });
@@ -84,10 +87,12 @@ const contactSchema = z.object({
 });
 
 export async function action({ request, params }: ActionArgs) {
+  const userId = await requireUserId(request);
+
   invariant(params.contactId, "contactId is missing");
 
-  const contact = await prisma.contact.findUnique({
-    where: { id: params.contactId },
+  const contact = await prisma.contact.findFirst({
+    where: { id: params.contactId, userId },
   });
   if (!contact) {
     throw json("Contact not found", { status: 404 });

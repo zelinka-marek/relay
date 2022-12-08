@@ -72,7 +72,7 @@ export async function requireUser(request: Request) {
   return user;
 }
 
-export async function redirectAuthedUser(request: Request, redirectTo = "/") {
+export async function redirectAuthedUser(request: Request, redirectTo: string) {
   const userId = await getUserId(request);
   if (userId) {
     throw redirect(redirectTo);

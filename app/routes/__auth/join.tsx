@@ -10,7 +10,7 @@ import { createUserSession, redirectAuthedUser } from "~/session.server";
 import { safeRedirect } from "~/utils";
 
 export async function loader({ request }: LoaderArgs) {
-  await redirectAuthedUser(request);
+  await redirectAuthedUser(request, "/contacts");
 
   return json(null);
 }

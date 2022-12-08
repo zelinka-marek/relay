@@ -25,14 +25,16 @@ export async function loader({ params }: LoaderArgs) {
   return json({ notes });
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request, params }: ActionArgs) {
+  invariant(params.contactId, "contactId is missing");
+
   const formData = await request.formData();
 
   const noteId = formData.get("noteId");
   invariant(typeof noteId === "string", "noteId is missing");
 
-  const note = await prisma.note.findUnique({
-    where: { id: noteId },
+  const note = await prisma.note.findFirst({
+    where: { id: noteId, contactId: params.contactId },
   });
   if (!note) {
     throw json("Note not found", { status: 404 });

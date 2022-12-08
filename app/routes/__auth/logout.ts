@@ -3,7 +3,7 @@ import { redirect } from "@remix-run/node";
 import { logout, redirectAuthedUser } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
-  await redirectAuthedUser(request);
+  await redirectAuthedUser(request, "/contacts");
 
   return redirect("/");
 }

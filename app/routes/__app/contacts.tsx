@@ -5,8 +5,7 @@ import {
   PlusIcon,
   StarIcon,
 } from "@heroicons/react/20/solid";
-import type { Prisma } from "@prisma/client";
-import type { LoaderArgs } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -22,23 +21,28 @@ import {
 import classNames from "clsx";
 import { useSpinDelay } from "spin-delay";
 import { prisma } from "~/db.server";
+import { requireUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderArgs) {
+  const userId = await requireUserId(request);
+
   const searchParams = new URL(request.url).searchParams;
   const query = searchParams.get("q");
 
-  const contactsCount = await prisma.contact.count();
-
-  const where: Prisma.ContactWhereInput = {};
-  if (query) {
-    where.OR = [
-      { firstName: { contains: query, mode: "insensitive" } },
-      { lastName: { contains: query, mode: "insensitive" } },
-    ];
-  }
+  const contactsCount = await prisma.contact.count({
+    where: { userId },
+  });
 
   const contacts = await prisma.contact.findMany({
-    where,
+    where: {
+      userId,
+      OR: query
+        ? [
+            { firstName: { contains: query, mode: "insensitive" } },
+            { lastName: { contains: query, mode: "insensitive" } },
+          ]
+        : undefined,
+    },
     select: {
       id: true,
       firstName: true,
@@ -52,9 +56,10 @@ export async function loader({ request }: LoaderArgs) {
   return json({ contacts, contactsCount });
 }
 
-export async function action() {
+export async function action({ request }: ActionArgs) {
+  const userId = await requireUserId(request);
   const contact = await prisma.contact.create({
-    data: {},
+    data: { userId },
   });
 
   return redirect(`/contacts/${contact.id}/edit`);
