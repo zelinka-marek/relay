@@ -1,7 +1,7 @@
 import type { ActionArgs, LoaderArgs, SerializeFrom } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, useFetcher, useLoaderData } from "@remix-run/react";
-import { formatDistanceToNowStrict, format } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
 import invariant from "tiny-invariant";
 import { prisma } from "~/db.server";
 
@@ -50,28 +50,29 @@ function NoteItem(props: { note: LoaderNote }) {
 
   return (
     <li key={note.id} className="py-5">
-      <p className="text-sm font-medium text-gray-800">{note.title}</p>
-      <p className="text-sm text-gray-500">
-        <time dateTime={note.createdAt}>
-          {format(new Date(note.createdAt), "MMM d")},{" "}
+      <p className="text-sm font-medium text-gray-900">{note.title}</p>
+      <p className="mt-1 max-w-prose text-sm text-gray-700">{note.body}</p>
+      <div className="mt-2 space-x-2">
+        <time
+          dateTime={note.createdAt}
+          className="text-sm font-medium text-gray-500"
+        >
           {formatDistanceToNowStrict(new Date(note.createdAt), {
             addSuffix: true,
             unit: "day",
             roundingMethod: "ceil",
           })}
         </time>
-      </p>
-      <p className="mt-1 max-w-prose text-sm text-gray-600">{note.body}</p>
-      <div className="mt-1 flex gap-2">
+        <span className="text-sm font-medium text-gray-500">·</span>
         <Form action={`${note.id}/edit`} className="inline-flex">
           <button
             type="submit"
-            className="rounded-md bg-gray-50 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
           >
             Edit
           </button>
         </Form>
-        <span className="text-gray-500">·</span>
+        <span className="text-sm font-medium text-gray-500">·</span>
         <deleteFetcher.Form
           method="post"
           onSubmit={(event) => {
@@ -84,7 +85,7 @@ function NoteItem(props: { note: LoaderNote }) {
           <input type="hidden" name="noteId" value={note.id} />
           <button
             type="submit"
-            className="rounded-md bg-gray-50 text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
           >
             Delete
           </button>
