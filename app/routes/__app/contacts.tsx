@@ -1,5 +1,6 @@
 import {
   ArrowPathIcon,
+  ChevronLeftIcon,
   MagnifyingGlassIcon,
   PlusIcon,
   StarIcon,
@@ -9,6 +10,7 @@ import type { LoaderArgs } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
+  Link,
   NavLink,
   Outlet,
   useLoaderData,
@@ -110,17 +112,30 @@ export default function ContactsRoute() {
   const matchesRoute = location.pathname.match(/contacts\/?$/);
 
   return (
-    <div className="flex flex-1 overflow-hidden">
-      <main
+    <main className="flex flex-1 overflow-hidden">
+      <div
         className={classNames(
           matchesRoute && "hidden lg:block",
           navigating && "opacity-25 transition-opacity delay-200 duration-200",
           "flex-1 overflow-y-auto focus:outline-none lg:order-last"
         )}
       >
+        <nav className="border-b bg-white lg:hidden" aria-label="Breadcrumb">
+          <div className="mx-auto max-w-3xl px-4 py-3 sm:px-6 lg:px-8">
+            <div className="flex">
+              <Link
+                to="."
+                className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
+              >
+                <ChevronLeftIcon className="-ml-2 h-5 w-5 text-gray-400" />
+                Contacts
+              </Link>
+            </div>
+          </div>
+        </nav>
         <Outlet />
-      </main>
-      <aside
+      </div>
+      <div
         className={classNames(
           matchesRoute ? "w-full" : "hidden",
           "shrink-0 bg-white lg:order-first lg:flex lg:w-96 lg:flex-col lg:border-r"
@@ -157,6 +172,7 @@ export default function ContactsRoute() {
             matchesRoute && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
             "flex-1 overflow-y-auto px-6 py-4"
           )}
+          aria-label="Contacts"
         >
           {contacts.length ? (
             <ul role="list" className="space-y-1">
@@ -223,7 +239,7 @@ export default function ContactsRoute() {
             </p>
           )}
         </nav>
-      </aside>
-    </div>
+      </div>
+    </main>
   );
 }
