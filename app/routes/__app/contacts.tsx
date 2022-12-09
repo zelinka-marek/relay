@@ -70,7 +70,11 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     return { title: "No contacts" };
   }
 
-  return { title: `Contacts (${data.contactsCount})` };
+  return {
+    title: `Contacts (${data.contactsCount} ${
+      data.contactsCount === 1 ? "contact" : "contacts"
+    })`,
+  };
 };
 
 function SearchAction() {
@@ -162,9 +166,8 @@ export default function ContactsRoute() {
             )}
           >
             <h2 className="text-lg font-medium text-gray-900">Contacts</h2>
-            <p className="mt-0.5 text-sm text-gray-500">
-              {contactsCount} total{" "}
-              {contactsCount === 1 ? "contact" : "contacts"}
+            <p className="mt-0.5 text-sm font-medium text-gray-500">
+              {contactsCount} {contactsCount === 1 ? "contact" : "contacts"}
             </p>
             <div className="mt-6 flex gap-4">
               <SearchAction />

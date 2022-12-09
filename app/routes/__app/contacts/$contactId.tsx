@@ -74,7 +74,7 @@ export async function action({ request, params }: ActionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  if (!data.contact) {
+  if (!data?.contact) {
     return { title: "Not Found" };
   }
 
