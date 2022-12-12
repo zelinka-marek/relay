@@ -169,7 +169,7 @@ export default function EditContactRoute() {
                   type="text"
                   name="firstName"
                   id="firstName"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.firstName ?? undefined}
                   aria-invalid={actionData?.errors.firstName ? true : undefined}
                   aria-errormessage="firstName-errors"
@@ -196,7 +196,7 @@ export default function EditContactRoute() {
                   type="text"
                   name="lastName"
                   id="lastName"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.lastName ?? undefined}
                   aria-invalid={actionData?.errors.lastName ? true : undefined}
                   aria-errormessage="lastName-errors"
@@ -223,7 +223,7 @@ export default function EditContactRoute() {
                   type="url"
                   name="avatarUrl"
                   id="avatarUrl"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.avatarUrl ?? undefined}
                   aria-invalid={actionData?.errors.avatarUrl ? true : undefined}
                   aria-errormessage="avatarUrl-errors"
@@ -250,7 +250,7 @@ export default function EditContactRoute() {
                   type="text"
                   name="location"
                   id="location"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.location ?? undefined}
                   aria-invalid={actionData?.errors.location ? true : undefined}
                   aria-errormessage="location-errors"
@@ -277,7 +277,7 @@ export default function EditContactRoute() {
                   type="email"
                   name="email"
                   id="email"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.email ?? undefined}
                   aria-invalid={actionData?.errors.email ? true : undefined}
                   aria-errormessage="email-errors"
@@ -304,7 +304,7 @@ export default function EditContactRoute() {
                   type="text"
                   name="title"
                   id="title"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.title ?? undefined}
                   aria-invalid={actionData?.errors.title ? true : undefined}
                   aria-errormessage="title-errors"
@@ -331,7 +331,7 @@ export default function EditContactRoute() {
                   type="text"
                   name="company"
                   id="company"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.company ?? undefined}
                   aria-invalid={actionData?.errors.company ? true : undefined}
                   aria-errormessage="company-errors"
@@ -358,7 +358,7 @@ export default function EditContactRoute() {
                   type="tel"
                   name="phone"
                   id="phone"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.phone ?? undefined}
                   aria-invalid={actionData?.errors.phone ? true : undefined}
                   aria-errormessage="phone-errors"
@@ -389,7 +389,7 @@ export default function EditContactRoute() {
                     type="text"
                     name="twitterHandle"
                     id="twitterHandle"
-                    className="block w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    className="block w-full rounded-md border-gray-300 pl-7 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                     defaultValue={contact.twitterHandle ?? undefined}
                     aria-invalid={
                       actionData?.errors.twitterHandle ? true : undefined
@@ -419,7 +419,7 @@ export default function EditContactRoute() {
                   type="url"
                   name="websiteUrl"
                   id="websiteUrl"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.websiteUrl ?? undefined}
                   aria-invalid={
                     actionData?.errors.websiteUrl ? true : undefined
@@ -448,7 +448,7 @@ export default function EditContactRoute() {
                   type="url"
                   name="linkedinUrl"
                   id="linkedinUrl"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.linkedinUrl ?? undefined}
                   aria-invalid={
                     actionData?.errors.linkedinUrl ? true : undefined
@@ -477,7 +477,7 @@ export default function EditContactRoute() {
                   name="about"
                   id="about"
                   rows={4}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                   defaultValue={contact.about ?? undefined}
                   aria-invalid={actionData?.errors.about ? true : undefined}
                   aria-errormessage="about-errors"
@@ -500,13 +500,13 @@ export default function EditContactRoute() {
                 onClick={() => {
                   navigate(-1);
                 }}
-                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                className="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
               >
                 Save
               </button>

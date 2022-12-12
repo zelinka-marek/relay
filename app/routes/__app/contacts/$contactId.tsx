@@ -120,7 +120,7 @@ function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
         name="intent"
         value="favorite"
         aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
-        className="rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+        className="rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       >
         <StarIcon
           className={classNames(
@@ -143,14 +143,18 @@ const tabs: { name: string; to: LinkProps["to"] }[] = [
 export default function ContactRoute() {
   const { contact } = useLoaderData<typeof loader>();
 
+  const hasName = contact.firstName || contact.lastName;
   const name = (
     <div className="flex items-baseline gap-4">
-      <h1 className="truncate text-2xl font-bold text-gray-900">
-        {contact.firstName || contact.lastName ? (
-          `${contact.firstName} ${contact.lastName}`.trim()
-        ) : (
-          <i className="text-gray-500">No name</i>
+      <h1
+        className={classNames(
+          hasName ? "text-gray-900" : "text-gray-500",
+          "truncate text-2xl font-bold text-gray-900"
         )}
+      >
+        {hasName
+          ? `${contact.firstName} ${contact.lastName}`.trim()
+          : "No name"}
       </h1>
       <FavoriteAction contact={contact} />
     </div>
@@ -183,7 +187,7 @@ export default function ContactRoute() {
               <Form action="edit">
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
                   <PencilIcon className="-ml-1 h-5 w-5 text-gray-400" />
                   Edit
@@ -205,7 +209,7 @@ export default function ContactRoute() {
                   type="submit"
                   name="intent"
                   value="delete"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
                   <TrashIcon className="-ml-1 h-5 w-5 text-gray-400" />
                   Delete
@@ -229,7 +233,7 @@ export default function ContactRoute() {
                   className={({ isActive }) =>
                     classNames(
                       isActive
-                        ? "border-indigo-500 text-gray-900"
+                        ? "border-primary-500 text-gray-900"
                         : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
                       "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                     )

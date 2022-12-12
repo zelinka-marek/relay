@@ -69,7 +69,7 @@ function NoteItem(props: { note: LoaderNote }) {
         <Form action={`${note.id}/edit`} className="inline-flex">
           <button
             type="submit"
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            className="text-sm font-medium text-primary-600 hover:text-primary-500"
           >
             Edit
           </button>
@@ -87,7 +87,7 @@ function NoteItem(props: { note: LoaderNote }) {
           <input type="hidden" name="noteId" value={note.id} />
           <button
             type="submit"
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            className="text-sm font-medium text-primary-600 hover:text-primary-500"
           >
             Delete
           </button>
@@ -105,7 +105,7 @@ export default function ContactNotesRoute() {
       <Form action="new">
         <button
           type="submit"
-          className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
+          className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
           New note
         </button>

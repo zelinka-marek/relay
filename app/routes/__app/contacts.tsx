@@ -1,6 +1,6 @@
 import {
+  ArrowLongLeftIcon,
   ArrowPathIcon,
-  ChevronLeftIcon,
   MagnifyingGlassIcon,
   PlusIcon,
   StarIcon,
@@ -109,7 +109,7 @@ function SearchAction() {
               replace: !isFirstSearch,
             });
           }}
-          className="block w-full rounded-md border-gray-300 pl-10 text-sm focus:border-indigo-500 focus:ring-indigo-500"
+          className="block w-full rounded-md border-gray-300 pl-10 text-sm focus:border-primary-500 focus:ring-primary-500"
           placeholder="Search"
           aria-label="Search contacts"
           defaultValue={query}
@@ -137,15 +137,15 @@ export default function ContactsRoute() {
           "flex-1 overflow-y-auto focus:outline-none lg:order-last"
         )}
       >
-        <nav className="border-b bg-white lg:hidden" aria-label="Breadcrumb">
-          <div className="mx-auto max-w-3xl px-4 py-3 sm:px-6 lg:px-8">
+        <nav className="border-b py-3 lg:hidden" aria-label="Breadcrumb">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <div className="flex">
               <Link
                 to="."
-                className="inline-flex items-center space-x-3 text-sm font-medium text-gray-900"
+                className="group inline-flex gap-3 text-sm font-medium text-gray-500 hover:text-gray-700"
               >
-                <ChevronLeftIcon className="-ml-2 h-5 w-5 text-gray-400" />
-                Contacts
+                <ArrowLongLeftIcon className="h-5 w-5 shrink-0 text-gray-400 group-hover:text-gray-600" />
+                Back to Contacts
               </Link>
             </div>
           </div>
@@ -162,21 +162,17 @@ export default function ContactsRoute() {
           <div
             className={classNames(
               matchesRoute && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
-              "px-6 pt-6 pb-4"
+              "px-6 py-4"
             )}
           >
-            <h2 className="text-lg font-medium text-gray-900">Contacts</h2>
-            <p className="mt-0.5 text-sm font-medium text-gray-500">
-              {contactsCount} {contactsCount === 1 ? "contact" : "contacts"}
-            </p>
-            <div className="mt-6 flex gap-4">
+            <div className="flex gap-4">
               <SearchAction />
               <Form method="post">
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="inline-flex items-center gap-2 rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
-                  <PlusIcon className="-ml-1 h-5 w-5 text-gray-400" />
+                  <PlusIcon className="-ml-1 h-5 w-5" />
                   New
                 </button>
               </Form>
@@ -192,67 +188,73 @@ export default function ContactsRoute() {
         >
           {contacts.length ? (
             <ul role="list" className="space-y-1">
-              {contacts.map((contact) => (
-                <li key={contact.id}>
-                  <NavLink
-                    prefetch="intent"
-                    to={contact.id}
-                    className={({ isActive }) =>
-                      classNames(
-                        isActive ? "bg-gray-50" : "hover:bg-gray-50",
-                        "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-900"
-                      )
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {contact.avatarUrl ? (
-                          <img
-                            src={contact.avatarUrl}
-                            alt=""
-                            className="h-6 w-6 rounded-full"
-                          />
-                        ) : (
-                          <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-100">
-                            <svg
-                              className="h-full w-full text-gray-300"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
-                            </svg>
-                          </span>
-                        )}
-                        <span className="flex-auto">
-                          {contact.firstName || contact.lastName ? (
-                            `${contact.firstName} ${contact.lastName}`.trim()
+              {contacts.map((contact) => {
+                const hasName = contact.firstName || contact.lastName;
+
+                return (
+                  <li key={contact.id}>
+                    <NavLink
+                      prefetch="intent"
+                      to={contact.id}
+                      className={({ isActive }) =>
+                        classNames(
+                          isActive ? "bg-primary-500" : "hover:bg-gray-50",
+                          hasName
+                            ? isActive
+                              ? "text-white"
+                              : "text-gray-900"
+                            : isActive
+                            ? "text-primary-100"
+                            : "text-gray-500",
+                          "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
+                        )
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {contact.avatarUrl ? (
+                            <img
+                              src={contact.avatarUrl}
+                              alt=""
+                              className="h-6 w-6 rounded-full"
+                            />
                           ) : (
-                            <i className="text-gray-500">No name</i>
+                            <span className="inline-block h-6 w-6 overflow-hidden rounded-full bg-gray-100">
+                              <svg
+                                className="h-full w-full text-gray-300"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
+                              </svg>
+                            </span>
                           )}
-                          {contact.favorite && (
-                            <span className="sr-only">, starred</span>
-                          )}
-                        </span>
-                        {contact.favorite && (
-                          <StarIcon
-                            className={classNames(
-                              isActive
-                                ? "text-yellow-400"
-                                : "text-yellow-300 group-hover:text-yellow-400",
-                              "h-5 w-5"
+                          <span className="flex-auto">
+                            {hasName
+                              ? `${contact.firstName} ${contact.lastName}`.trim()
+                              : "No name"}
+                            {contact.favorite && (
+                              <span className="sr-only">, starred</span>
                             )}
-                          />
-                        )}
-                      </>
-                    )}
-                  </NavLink>
-                </li>
-              ))}
+                          </span>
+                          {contact.favorite && (
+                            <StarIcon
+                              className={classNames(
+                                !isActive &&
+                                  "text-yellow-300 group-hover:text-yellow-400",
+                                "h-5 w-5"
+                              )}
+                            />
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
-            <p className="text-sm text-gray-500">
-              <i>No contacts found</i>
-            </p>
+            <p className="text-sm text-gray-500">No contacts found</p>
           )}
         </nav>
       </div>
