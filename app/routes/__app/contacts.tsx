@@ -4,6 +4,7 @@ import {
   MagnifyingGlassIcon,
   PlusIcon,
   StarIcon,
+  ChevronLeftIcon,
 } from "@heroicons/react/20/solid";
 import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
@@ -142,10 +143,10 @@ export default function ContactsRoute() {
             <div className="flex">
               <Link
                 to="."
-                className="group inline-flex gap-3 text-sm font-medium text-gray-500 hover:text-gray-700"
+                className="inline-flex gap-0.5 text-sm font-medium text-gray-500 hover:text-gray-700"
               >
-                <ArrowLongLeftIcon className="h-5 w-5 shrink-0 text-gray-400 group-hover:text-gray-600" />
-                Back to Contacts
+                <ChevronLeftIcon className="-ml-1 h-5 w-5 shrink-0 text-gray-400" />
+                Contacts
               </Link>
             </div>
           </div>
@@ -190,6 +191,9 @@ export default function ContactsRoute() {
             <ul role="list" className="space-y-1">
               {contacts.map((contact) => {
                 const hasName = contact.firstName || contact.lastName;
+                const name = hasName
+                  ? `${contact.firstName} ${contact.lastName}`.trim()
+                  : "No name";
 
                 return (
                   <li key={contact.id}>
@@ -206,7 +210,7 @@ export default function ContactsRoute() {
                             : isActive
                             ? "text-primary-100"
                             : "text-gray-500",
-                          "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium"
+                          "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm"
                         )
                       }
                     >
@@ -230,9 +234,7 @@ export default function ContactsRoute() {
                             </span>
                           )}
                           <span className="flex-auto">
-                            {hasName
-                              ? `${contact.firstName} ${contact.lastName}`.trim()
-                              : "No name"}
+                            {name}
                             {contact.favorite && (
                               <span className="sr-only">, starred</span>
                             )}
