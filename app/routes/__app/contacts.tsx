@@ -1,10 +1,9 @@
 import {
-  ArrowLongLeftIcon,
   ArrowPathIcon,
+  ChevronLeftIcon,
   MagnifyingGlassIcon,
   PlusIcon,
   StarIcon,
-  ChevronLeftIcon,
 } from "@heroicons/react/20/solid";
 import type { ActionArgs, LoaderArgs, MetaFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
@@ -121,7 +120,7 @@ function SearchAction() {
 }
 
 export default function ContactsRoute() {
-  const { contacts, contactsCount } = useLoaderData<typeof loader>();
+  const { contacts } = useLoaderData<typeof loader>();
 
   const transition = useTransition();
   const navigating = transition.state === "loading";
