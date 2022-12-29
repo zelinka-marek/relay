@@ -22,20 +22,26 @@ const loginSchema = z.object({
 });
 
 export async function action({ request }: ActionArgs) {
-  const data = Object.fromEntries(await request.formData());
+  const formData = await request.formData();
+  const email = formData.get("email");
+  const password = formData.get("password");
+  const remember = formData.get("remember");
 
-  const valid = loginSchema.safeParse(data);
-  if (!valid.success) {
-    return json({ errors: valid.error.flatten().fieldErrors }, { status: 400 });
+  const validation = loginSchema.safeParse({ email, password, remember });
+  if (!validation.success) {
+    return json(
+      { errors: validation.error.flatten().fieldErrors },
+      { status: 400 }
+    );
   }
 
-  const existingUser = await prisma.user.findFirst({
-    where: { email: valid.data.email },
+  const user = await prisma.user.findFirst({
+    where: { email: validation.data.email },
     include: {
       password: true,
     },
   });
-  if (!existingUser?.password) {
+  if (!user?.password) {
     return json(
       {
         errors: {
@@ -49,8 +55,8 @@ export async function action({ request }: ActionArgs) {
   }
 
   const validCredentials = await verify(
-    valid.data.password,
-    existingUser.password.hash
+    validation.data.password,
+    user.password.hash
   );
   if (!validCredentials) {
     return json(
@@ -70,8 +76,8 @@ export async function action({ request }: ActionArgs) {
 
   return createUserSession({
     request,
-    userId: existingUser.id,
-    remember: valid.data.remember === "on",
+    userId: user.id,
+    remember: validation.data.remember === "on",
     redirectTo,
   });
 }
@@ -188,7 +194,7 @@ export default function LoginRoute() {
             </div>
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+              className="flex w-full items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
               Sign in
             </button>

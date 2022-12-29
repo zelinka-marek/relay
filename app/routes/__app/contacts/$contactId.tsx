@@ -34,7 +34,7 @@ export async function loader({ request, params }: LoaderArgs) {
     },
   });
   if (!contact) {
-    throw json("Contact not found", { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
   return json({ contact });
@@ -49,28 +49,32 @@ export async function action({ request, params }: ActionArgs) {
     where: { id: params.contactId, userId },
   });
   if (!contact) {
-    throw json("Contact not found", { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
   const formData = await request.formData();
 
   const intent = formData.get("intent");
-  if (intent === "favorite") {
-    await prisma.contact.update({
-      where: { id: contact.id },
-      data: { favorite: !contact.favorite },
-    });
+  switch (intent) {
+    case "favorite": {
+      const updatedContact = await prisma.contact.update({
+        where: { id: contact.id },
+        data: { favorite: !contact.favorite },
+      });
 
-    return json(null);
-  } else if (intent === "delete") {
-    await prisma.contact.delete({ where: { id: contact.id } });
+      return json({ updatedContact });
+    }
+    case "delete": {
+      await prisma.contact.delete({ where: { id: contact.id } });
 
-    return redirect("/contacts");
+      return redirect("/contacts");
+    }
+    default: {
+      throw new Response(`Unexpected operation by the intent of "${intent}"`, {
+        status: 400,
+      });
+    }
   }
-
-  throw json(`Unexpected operation by the intent of "${intent}"`, {
-    status: 400,
-  });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -88,13 +92,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   };
 };
 
-function Layout(props: { containError?: boolean; children?: React.ReactNode }) {
-  const { containError, children } = props;
+function Layout(props: { hasError?: boolean; children?: React.ReactNode }) {
+  const { hasError, children } = props;
 
   return (
     <div
       className={classNames(
-        containError && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
+        hasError && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
         "py-10"
       )}
     >
@@ -108,9 +112,9 @@ function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
 
   const favoriteFetcher = useFetcher();
 
-  let favorite = contact.favorite;
+  let isFavorite = contact.favorite;
   if (favoriteFetcher.submission) {
-    favorite = !favorite;
+    isFavorite = !isFavorite;
   }
 
   return (
@@ -119,12 +123,12 @@ function FavoriteAction(props: { contact: Pick<Contact, "favorite"> }) {
         type="submit"
         name="intent"
         value="favorite"
-        aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
+        aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
         className="rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
       >
         <StarIcon
           className={classNames(
-            favorite
+            isFavorite
               ? "text-yellow-300 hover:text-yellow-400"
               : "text-gray-300 hover:text-gray-400",
             "h-5 w-5"
@@ -187,7 +191,7 @@ export default function ContactRoute() {
               <Form action="edit">
                 <button
                   type="submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
                   <PencilIcon className="-ml-1 h-5 w-5 text-gray-400" />
                   Edit
@@ -209,7 +213,7 @@ export default function ContactRoute() {
                   type="submit"
                   name="intent"
                   value="delete"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
                   <TrashIcon className="-ml-1 h-5 w-5 text-gray-400" />
                   Delete
@@ -256,29 +260,35 @@ export default function ContactRoute() {
 export function CatchBoundary() {
   const caught = useCatch();
 
-  if (caught.status === 400) {
-    return (
-      <Layout containError>
-        <Alert title="Unable to proceed with this operation" />
-      </Layout>
-    );
-  } else if (caught.status === 404) {
-    return (
-      <Layout containError>
-        <Alert title="No contact found">
-          We can't find the contact you're looking for. Please check your URL.
-          Has the contact been deleted?
-        </Alert>
-      </Layout>
-    );
+  switch (caught.status) {
+    case 400: {
+      return (
+        <Layout hasError>
+          <Alert title="Unable to proceed with this operation" />
+        </Layout>
+      );
+    }
+    case 404: {
+      return (
+        <Layout hasError>
+          <Alert title="No contact found">
+            We can't find the contact you're looking for. Please check your URL.
+            Has the contact been deleted?
+          </Alert>
+        </Layout>
+      );
+    }
+    default: {
+      throw new Error(
+        `Unexpected caught response with status: ${caught.status}`
+      );
+    }
   }
-
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
 export function ErrorBoundary() {
   return (
-    <Layout containError>
+    <Layout hasError>
       <Alert title="An unexpected error occurred">
         We can't load the contact you're looking for. Please chek your URL and
         try again later.

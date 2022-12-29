@@ -11,23 +11,28 @@ const noteSchema = z.object({
   body: z
     .string()
     .trim()
-    .min(1, "Description is required")
-    .max(260, "Description is too long"),
+    .min(1, "Content is required")
+    .max(260, "Content is too long"),
 });
 
 export async function action({ request, params }: ActionArgs) {
   invariant(params.contactId, "contactId is missing");
 
-  const data = Object.fromEntries(await request.formData());
+  const formData = await request.formData();
+  const title = formData.get("title");
+  const body = formData.get("body");
 
-  const valid = noteSchema.safeParse(data);
-  if (!valid.success) {
-    return json({ errors: valid.error.flatten().fieldErrors }, { status: 400 });
+  const validation = noteSchema.safeParse({ title, body });
+  if (!validation.success) {
+    return json(
+      { errors: validation.error.flatten().fieldErrors },
+      { status: 400 }
+    );
   }
 
   await prisma.note.create({
     data: {
-      ...valid.data,
+      ...validation.data,
       contact: {
         connect: { id: params.contactId },
       },
@@ -92,7 +97,7 @@ export default function NewNoteRoute() {
             htmlFor="body"
             className="block text-sm font-medium text-gray-700"
           >
-            Description
+            Content
           </label>
           <textarea
             ref={bodyRef}
@@ -100,7 +105,7 @@ export default function NewNoteRoute() {
             id="body"
             rows={4}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-            placeholder="Weite a note..."
+            placeholder="Write a note..."
             aria-invalid={actionData?.errors.body ? true : undefined}
             aria-errormessage="body-errors"
           />
@@ -121,13 +126,13 @@ export default function NewNoteRoute() {
             onClick={() => {
               navigate(-1);
             }}
-            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            className="flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+            className="flex items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Save
           </button>

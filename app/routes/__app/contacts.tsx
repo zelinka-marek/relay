@@ -58,6 +58,7 @@ export async function loader({ request }: LoaderArgs) {
 
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
+
   const contact = await prisma.contact.create({
     data: { userId },
   });
@@ -82,8 +83,8 @@ function SearchAction() {
   const query = searchParams.get("q") ?? undefined;
 
   const transition = useTransition();
-  const searching = new URLSearchParams(transition.location?.search).has("q");
-  const shouldRenderSpinner = useSpinDelay(searching, {
+  const isSearching = new URLSearchParams(transition.location?.search).has("q");
+  const shouldRenderSpinner = useSpinDelay(isSearching, {
     delay: 150,
     minDuration: 500,
   });
@@ -111,7 +112,7 @@ function SearchAction() {
           }}
           className="block w-full rounded-md border-gray-300 pl-10 text-sm focus:border-primary-500 focus:ring-primary-500"
           placeholder="Search"
-          aria-label="Search contacts"
+          aria-label="search contacts"
           defaultValue={query}
         />
       </div>
@@ -126,18 +127,18 @@ export default function ContactsRoute() {
   const navigating = transition.state === "loading";
 
   const location = useLocation();
-  const matchesRoute = location.pathname.match(/contacts\/?$/);
+  const thisRouteMatch = location.pathname.match(/contacts\/?$/);
 
   return (
     <main className="flex flex-1 overflow-hidden">
       <div
         className={classNames(
-          matchesRoute && "hidden lg:block",
+          thisRouteMatch && "hidden lg:block",
           navigating && "opacity-25 transition-opacity delay-200 duration-200",
           "flex-1 overflow-y-auto focus:outline-none lg:order-last"
         )}
       >
-        <nav className="border-b py-3 lg:hidden" aria-label="Breadcrumb">
+        <nav className="border-b py-3 lg:hidden" aria-label="breadcrumb">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <div className="flex">
               <Link
@@ -154,14 +155,14 @@ export default function ContactsRoute() {
       </div>
       <div
         className={classNames(
-          matchesRoute ? "w-full" : "hidden",
+          thisRouteMatch ? "w-full" : "hidden",
           "shrink-0 bg-white lg:order-first lg:flex lg:w-96 lg:flex-col lg:border-r"
         )}
       >
         <div className="border-b">
           <div
             className={classNames(
-              matchesRoute && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
+              thisRouteMatch && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
               "px-6 py-4"
             )}
           >
@@ -170,9 +171,9 @@ export default function ContactsRoute() {
               <Form method="post">
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                  className="flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                 >
-                  <PlusIcon className="-ml-1 h-5 w-5" />
+                  <PlusIcon className="-ml-1 h-5 w-5 text-gray-400" />
                   New
                 </button>
               </Form>
@@ -181,10 +182,10 @@ export default function ContactsRoute() {
         </div>
         <nav
           className={classNames(
-            matchesRoute && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
+            thisRouteMatch && "lg:max-w-auto mx-auto max-w-3xl lg:mx-0",
             "flex-1 overflow-y-auto px-6 py-4"
           )}
-          aria-label="Contacts"
+          aria-label="contacts"
         >
           {contacts.length ? (
             <ul role="list" className="space-y-1">

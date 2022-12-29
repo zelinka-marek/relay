@@ -23,7 +23,7 @@ export async function loader({ request, params }: LoaderArgs) {
     where: { id: params.contactId, userId },
   });
   if (!contact) {
-    throw json("Contact not found", { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
   return json({ contact });
@@ -95,19 +95,47 @@ export async function action({ request, params }: ActionArgs) {
     where: { id: params.contactId, userId },
   });
   if (!contact) {
-    throw json("Contact not found", { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
-  const data = Object.fromEntries(await request.formData());
+  const formData = await request.formData();
+  const firstName = formData.get("firstName");
+  const lastName = formData.get("lastName");
+  const avatarUrl = formData.get("avatarUrl");
+  const title = formData.get("title");
+  const company = formData.get("company");
+  const email = formData.get("email");
+  const phone = formData.get("phone");
+  const location = formData.get("location");
+  const twitterHandle = formData.get("twitterHandle");
+  const websiteUrl = formData.get("websiteUrl");
+  const linkedinUrl = formData.get("linkedinUrl");
+  const about = formData.get("about");
 
-  const valid = contactSchema.safeParse(data);
-  if (!valid.success) {
-    return json({ errors: valid.error.flatten().fieldErrors }, { status: 400 });
+  const validation = contactSchema.safeParse({
+    firstName,
+    lastName,
+    avatarUrl,
+    title,
+    company,
+    email,
+    phone,
+    location,
+    twitterHandle,
+    websiteUrl,
+    linkedinUrl,
+    about,
+  });
+  if (!validation.success) {
+    return json(
+      { errors: validation.error.flatten().fieldErrors },
+      { status: 400 }
+    );
   }
 
   await prisma.contact.update({
     where: { id: contact.id },
-    data: valid.data,
+    data: validation.data,
   });
 
   return redirect(`/contacts/${contact.id}`);
@@ -128,13 +156,13 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
   };
 };
 
-function Layout(props: { containError?: boolean; children?: React.ReactNode }) {
-  const { containError, children } = props;
+function Layout(props: { hasError?: boolean; children?: React.ReactNode }) {
+  const { hasError, children } = props;
 
   return (
     <div
       className={classNames(
-        containError && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
+        hasError && "mx-auto max-w-3xl px-4 sm:px-6 lg:px-8",
         "py-10"
       )}
     >
@@ -500,13 +528,13 @@ export default function EditContactRoute() {
                 onClick={() => {
                   navigate(-1);
                 }}
-                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                className="flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+                className="flex items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
               >
                 Save
               </button>
@@ -521,23 +549,28 @@ export default function EditContactRoute() {
 export function CatchBoundary() {
   const caught = useCatch();
 
-  if (caught.status === 404) {
-    return (
-      <Layout containError>
-        <Alert title="No contact found">
-          We can't find the contact you're looking for. Please check your URL.
-          Has the contact been deleted?
-        </Alert>
-      </Layout>
-    );
+  switch (caught.status) {
+    case 404: {
+      return (
+        <Layout hasError>
+          <Alert title="No contact found">
+            We can't find the contact you're looking for. Please check your URL.
+            Has the contact been deleted?
+          </Alert>
+        </Layout>
+      );
+    }
+    default: {
+      throw new Error(
+        `Unexpected caught response with status: ${caught.status}`
+      );
+    }
   }
-
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
 export function ErrorBoundary() {
   return (
-    <Layout containError>
+    <Layout hasError>
       <Alert title="An unexpected error occurred">
         We can't load the contact you're looking for. Please chek your URL and
         try again later.

@@ -21,7 +21,7 @@ export async function loader({ params }: ActionArgs) {
     select: { title: true, body: true },
   });
   if (!note) {
-    throw json("Note not found", { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
   return json({ note });
@@ -32,8 +32,8 @@ const noteSchema = z.object({
   body: z
     .string()
     .trim()
-    .min(1, "Description is required")
-    .max(260, "Description is too long"),
+    .min(1, "Content is required")
+    .max(260, "Content is too long"),
 });
 
 export async function action({ request, params }: ActionArgs) {
@@ -44,19 +44,24 @@ export async function action({ request, params }: ActionArgs) {
     where: { id: params.noteId, contactId: params.contactId },
   });
   if (!note) {
-    throw json("Note not found", { status: 404 });
+    throw new Response("Not Found", { status: 404 });
   }
 
-  const data = Object.fromEntries(await request.formData());
+  const formData = await request.formData();
+  const title = formData.get("title");
+  const body = formData.get("body");
 
-  const valid = noteSchema.safeParse(data);
-  if (!valid.success) {
-    return json({ errors: valid.error.flatten().fieldErrors }, { status: 400 });
+  const validation = noteSchema.safeParse({ title, body });
+  if (!validation.success) {
+    return json(
+      { errors: validation.error.flatten().fieldErrors },
+      { status: 400 }
+    );
   }
 
   await prisma.note.update({
     where: { id: note.id },
-    data: valid.data,
+    data: validation.data,
   });
 
   return redirect(`/contacts/${params.contactId}/notes`);
@@ -119,7 +124,7 @@ export default function EditNoteRoute() {
             htmlFor="body"
             className="block text-sm font-medium text-gray-700"
           >
-            Description
+            Content
           </label>
           <textarea
             ref={bodyRef}
@@ -127,7 +132,7 @@ export default function EditNoteRoute() {
             id="body"
             rows={4}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-            placeholder="Weite a note..."
+            placeholder="Write a note..."
             defaultValue={note.body}
             aria-invalid={actionData?.errors.body ? true : undefined}
             aria-errormessage="body-errors"
@@ -149,13 +154,13 @@ export default function EditNoteRoute() {
             onClick={() => {
               navigate(-1);
             }}
-            className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            className="flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+            className="flex items-center justify-center rounded-md border border-transparent bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
           >
             Save
           </button>
@@ -168,16 +173,21 @@ export default function EditNoteRoute() {
 export function CatchBoundary() {
   const caught = useCatch();
 
-  if (caught.status === 404) {
-    return (
-      <Alert title="No note found">
-        We can't find the note you're looking for. Please check your URL. Has
-        the note been deleted?
-      </Alert>
-    );
+  switch (caught.status) {
+    case 404: {
+      return (
+        <Alert title="No note found">
+          We can't find the note you're looking for. Please check your URL. Has
+          the note been deleted?
+        </Alert>
+      );
+    }
+    default: {
+      throw new Error(
+        `Unexpected caught response with status: ${caught.status}`
+      );
+    }
   }
-
-  throw new Error(`Unexpected caught response with status: ${caught.status}`);
 }
 
 export function ErrorBoundary() {

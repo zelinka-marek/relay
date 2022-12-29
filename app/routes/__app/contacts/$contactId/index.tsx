@@ -25,7 +25,7 @@ export async function loader({ request, params }: LoaderArgs) {
     },
   });
   if (!contact) {
-    throw json("Contact not found", { status: 404 });
+    throw new Response("Not found", { status: 404 });
   }
 
   return json({ contact });

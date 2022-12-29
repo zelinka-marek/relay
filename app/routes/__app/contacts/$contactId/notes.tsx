@@ -37,12 +37,12 @@ export async function action({ request, params }: ActionArgs) {
     where: { id: noteId, contactId: params.contactId },
   });
   if (!note) {
-    throw json("Note not found", { status: 404 });
+    throw new Response("Not found", { status: 404 });
   }
 
-  await prisma.note.delete({ where: { id: note.id } });
+  const deletedNote = await prisma.note.delete({ where: { id: note.id } });
 
-  return json(null);
+  return json({ deletedNote });
 }
 
 function NoteItem(props: { note: LoaderNote }) {
@@ -105,7 +105,7 @@ export default function ContactNotesRoute() {
       <Form action="new">
         <button
           type="submit"
-          className="inline-flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+          className="flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
           New note
         </button>
@@ -119,9 +119,9 @@ export default function ContactNotesRoute() {
           </ul>
         </div>
       ) : (
-        <p className="text-center text-sm text-gray-500">
-          <i>No notes found</i>
-        </p>
+        <div className="py-12 text-center">
+          <p className="text-sm text-gray-500">No notes found</p>
+        </div>
       )}
     </div>
   );

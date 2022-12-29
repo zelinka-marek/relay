@@ -3,10 +3,13 @@ import crypto from "crypto";
 export async function hash(password: string): Promise<string> {
   return new Promise((resolve, reject) => {
     // generate random 16 bytes long salt
-    let salt = crypto.randomBytes(16).toString("hex");
+    const salt = crypto.randomBytes(16).toString("hex");
 
-    crypto.scrypt(password, salt, 64, (err, derivedKey) => {
-      if (err) reject(err);
+    crypto.scrypt(password, salt, 64, (error, derivedKey) => {
+      if (error) {
+        reject(error);
+      }
+
       resolve(`${salt}:${derivedKey.toString("hex")}`);
     });
   });
@@ -17,9 +20,13 @@ export async function verify(
   hashed: string
 ): Promise<boolean> {
   return new Promise((resolve, reject) => {
-    let [salt, key] = hashed.split(":");
-    crypto.scrypt(password, salt, 64, (err, derivedKey) => {
-      if (err) reject(err);
+    const [salt, key] = hashed.split(":");
+
+    crypto.scrypt(password, salt, 64, (error, derivedKey) => {
+      if (error) {
+        reject(error);
+      }
+
       resolve(key === derivedKey.toString("hex"));
     });
   });
